@@ -69,6 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   /// Fetch information from the host app about the name and version of the software
   void _fetchSoftwareName() {
+    print("FETCHING SOFTWARE NAME");
     channel.invokeMethod("getSoftwareName").then((softwareName) => this.setState(() {
       this._softwareName = softwareName;
     }));
@@ -84,10 +85,10 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      if(_softwareName == null) {
+      if(_softwareName.isEmpty) {
         _fetchSoftwareName();
       }
-      if(_softwareVersion == null) {
+      if(_softwareVersion.isEmpty) {
         _fetchSoftwareVersion();
       }
     });
