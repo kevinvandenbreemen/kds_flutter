@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:kds_flutter/colors.dart';
 
 void main() => runApp(MyApp());
@@ -27,6 +28,9 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
+
+
+
   MyHomePage({Key key, this.title}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -46,6 +50,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  static const channel = MethodChannel("com.vandenbreemen.kevindesignsystem/aboutScreen");
+
   String _softwareName = "";
   String _softwareVersion = "";
 
@@ -61,8 +67,31 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  /// Fetch information from the host app about the name and version of the software
+  void _fetchSoftwareName() {
+    channel.invokeMethod("getSoftwareName").then((softwareName) => this.setState(() {
+      this._softwareName = softwareName;
+    }));
+  }
+
+  void _fetchSoftwareVersion() {
+    channel.invokeMethod("getSoftwareVersion").then((version) => this.setState(() {
+      this._softwareVersion = version;
+    }));
+  }
+
   @override
   Widget build(BuildContext context) {
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if(_softwareName == null) {
+        _fetchSoftwareName();
+      }
+      if(_softwareVersion == null) {
+        _fetchSoftwareVersion();
+      }
+    });
+
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
